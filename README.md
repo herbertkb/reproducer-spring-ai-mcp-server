@@ -1,6 +1,26 @@
 # Reproducer for `McpClient` `CallToolRequest` arguments are received as `null` on the server side.
 
-I'm trying to create a very simple Spring AI MCP Server. 
+I'm trying to create a very simple Spring AI MCP Server.
+
+```java
+@Component
+public class CountEsTool {
+    Logger log = LoggerFactory.getLogger(CountEsTool.class);
+
+    @McpTool(name = "countEs", description = "Count the number of the letter 'e' in a word.")
+    public int countEs(
+            @McpToolParam(description = "word", required = true) String word) {
+        log.info("word={}", word);
+
+        int count = (int) List.of(word.split("")).stream()
+                    .filter(s -> s.equalsIgnoreCase("e"))
+                    .count();
+
+        log.info("word={}, count={}", word, count);
+        return count;
+    }
+}
+```
 
 If I run it with `mvn spring-boot:run` and test it with the MCP Inspector, it works fine. 
 
